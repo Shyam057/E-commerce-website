@@ -1,2 +1,10 @@
 @import "tailwindcss";
 
+@theme{
+    --font-poppins:Poppins, sans-serif;
+    --color-shop-light-pink: ##fcf0e4;
+    shop_light_pink: #fcf0e4,
+    shop_dark_greeb: #063c28,
+    shop_btn_dark_green: #063c28,
+    shop_light_bg: #f6f66
+}
