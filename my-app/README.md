@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# hamro-mini-daraz
 
-## Getting Started
+A Daraz-style full-stack e-commerce starter built with Next.js.
 
-First, run the development server:
+## Project Structure
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```text
+my-app/
+  app/
+    page.js              # Next.js page route, loads the frontend
+    api/                 # Backend API route URLs
+  frontend/
+    components/          # UI and customer-facing screens
+  backend/
+    store.js             # Server-side business logic for now
+  database/
+    schema.sql           # Planned production database tables
+  BACKEND.md             # Backend routes and production checklist
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Frontend
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+The frontend lives in `frontend/`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Main file:
 
-## Learn More
+- `frontend/components/Storefront.jsx`
 
-To learn more about Next.js, take a look at the following resources:
+It contains the marketplace UI: products, search, categories, cart, checkout, orders, and seller stats.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Backend
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The backend route URLs live in `app/api/`, because that is how Next.js works.
 
-## Deploy on Vercel
+The route files call logic from `backend/store.js`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Available routes:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `GET /api/products`
+- `GET /api/products/:id`
+- `GET /api/cart`
+- `POST /api/cart`
+- `PATCH /api/cart/:id`
+- `DELETE /api/cart`
+- `GET /api/orders`
+- `POST /api/orders`
+- `GET /api/seller/stats`
+
+## Database
+
+The database plan lives in `database/`.
+
+Current file:
+
+- `database/schema.sql`
+
+The app is not connected to a real database yet. It uses an in-memory store in `backend/store.js`. For production, connect PostgreSQL with Prisma and replace the in-memory functions with real database queries.
+
+## Run Locally
+
+```bash
+pnpm dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+## Build
+
+```bash
+pnpm build
+```

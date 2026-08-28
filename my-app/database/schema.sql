@@ -1,0 +1,98 @@
+CREATE TABLE users (
+  id BIGSERIAL PRIMARY KEY,
+  full_name VARCHAR(120) NOT NULL,
+  email VARCHAR(160) UNIQUE NOT NULL,
+  phone VARCHAR(30),
+  password_hash TEXT NOT NULL,
+  role VARCHAR(20) NOT NULL DEFAULT 'customer',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE sellers (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  shop_name VARCHAR(160) NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE categories (
+  id BIGSERIAL PRIMARY KEY,
+  name VARCHAR(100) UNIQUE NOT NULL,
+  slug VARCHAR(120) UNIQUE NOT NULL
+);
+
+CREATE TABLE products (
+  id BIGSERIAL PRIMARY KEY,
+  seller_id BIGINT NOT NULL REFERENCES sellers(id),
+  category_id BIGINT NOT NULL REFERENCES categories(id),
+  name VARCHAR(220) NOT NULL,
+  description TEXT,
+  price INTEGER NOT NULL,
+  old_price INTEGER,
+  stock INTEGER NOT NULL DEFAULT 0,
+  image_url TEXT,
+  rating NUMERIC(2, 1) NOT NULL DEFAULT 0,
+  sold_count INTEGER NOT NULL DEFAULT 0,
+  status VARCHAR(30) NOT NULL DEFAULT 'active',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE carts (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE cart_items (
+  id BIGSERIAL PRIMARY KEY,
+  cart_id BIGINT NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL REFERENCES products(id),
+  quantity INTEGER NOT NULL DEFAULT 1,
+  UNIQUE (cart_id, product_id)
+);
+
+CREATE TABLE orders (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  order_number VARCHAR(40) UNIQUE NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'placed',
+  subtotal INTEGER NOT NULL,
+  delivery_fee INTEGER NOT NULL DEFAULT 0,
+  total INTEGER NOT NULL,
+  payment_method VARCHAR(50) NOT NULL,
+  shipping_name VARCHAR(120) NOT NULL,
+  shipping_phone VARCHAR(30) NOT NULL,
+  shipping_address TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_items (
+  id BIGSERIAL PRIMARY KEY,
+  order_id BIGINT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+  product_id BIGINT NOT NULL REFERENCES products(id),
+  seller_id BIGINT NOT NULL REFERENCES sellers(id),
+  quantity INTEGER NOT NULL,
+  unit_price INTEGER NOT NULL,
+  total_price INTEGER NOT NULL
+);
+
+CREATE TABLE payments (
+  id BIGSERIAL PRIMARY KEY,
+  order_id BIGINT NOT NULL REFERENCES orders(id),
+  provider VARCHAR(50) NOT NULL,
+  status VARCHAR(30) NOT NULL DEFAULT 'pending',
+  transaction_id VARCHAR(120),
+  amount INTEGER NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE reviews (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id),
+  product_id BIGINT NOT NULL REFERENCES products(id),
+  rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
